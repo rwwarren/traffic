@@ -3,13 +3,13 @@ import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Environment;
 import javax.ws.rs.client.Client;
 
-public class TrafficService extends Application<ServiceServiceConfiguration> {
+public class TrafficService extends Application<TrafficServiceConfiguration> {
 
     public static void main(String[] args) throws Exception {
         new TrafficService().run(args);
     }
 
-    public void run(ServiceServiceConfiguration serviceServiceConfiguration, Environment environment) throws Exception {
+    public void run(TrafficServiceConfiguration trafficServiceConfiguration, Environment environment) throws Exception {
         final Client client = new JerseyClientBuilder(environment).build("client");
         environment.jersey().register(new Why(client));
 
