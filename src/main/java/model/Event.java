@@ -1,5 +1,6 @@
 package model;
 
+import DTOs.EventDTO;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -17,6 +18,10 @@ public class Event {
         this.date = date;
         this.time = time;
         this.location = location;
+    }
+
+    public EventDTO toDTO() {
+        return new EventDTO(name, description, date, time, location.toDTO());
     }
 
 }

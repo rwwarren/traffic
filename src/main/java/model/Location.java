@@ -1,5 +1,7 @@
 package model;
 
+import DTOs.LocationDTO;
+
 public class Location {
 
     private final double latitude;
@@ -8,5 +10,9 @@ public class Location {
     public Location(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public LocationDTO toDTO() {
+        return new LocationDTO(this.latitude, this.longitude);
     }
 }

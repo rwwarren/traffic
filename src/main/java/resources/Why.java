@@ -1,17 +1,19 @@
 package resources;
 
+import DTOs.EventDTO;
 import com.codahale.metrics.annotation.Timed;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import manager.EventManager;
+import model.Event;
 import request.FutureLocationRequest;
 import request.LocationRequest;
 
@@ -19,38 +21,34 @@ import request.LocationRequest;
 @Produces(MediaType.APPLICATION_JSON)
 public class Why {
 
-    private final Client client;
+    private final EventManager eventManager;
 
-    public Why(Client client) {
-        this.client = client;
+    public Why(EventManager eventManager) {
+        this.eventManager = eventManager;
     }
 
     @GET
     @Path("{city}")
     @Timed
-    public Response getEventsInCity(@PathParam("city") String city) {
-        final WebTarget target = client.target(String.format("http://gametonight.in/%s/json", city));
-        final Invocation.Builder request = target.request();
-        final Response response = request.get();
-        if (response.getStatus() == 404) {
-            return Response.status(404).build();
-        }
-        return response;
+    public List<EventDTO> getEventsInCity(@PathParam("city") String city) {
+        return eventManager.getEvents(city).stream().map(Event::toDTO).collect(Collectors.toList());
     }
 
 
     @POST
     @Path("/between")
     @Timed
-    public Response getEventsBetweenLocations(@Valid LocationRequest locationRequest) {
-        return Response.ok("works").build();
+    public List<EventDTO> getEventsBetweenLocations(@Valid LocationRequest locationRequest) {
+//        return Response.ok("works").build();
+        return new ArrayList<>();
     }
 
     @POST
     @Path("/between/future")
     @Timed
-    public Response getEventsBetweenLocationsFuture(@Valid FutureLocationRequest futureLocationRequest) {
-        return Response.ok("works").build();
+    public List<EventDTO> getEventsBetweenLocationsFuture(@Valid FutureLocationRequest futureLocationRequest) {
+//        return Response.ok("works").build();
+        return new ArrayList<>();
     }
 
 
