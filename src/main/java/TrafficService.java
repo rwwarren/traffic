@@ -2,6 +2,7 @@ import io.dropwizard.Application;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Environment;
 import javax.ws.rs.client.Client;
+import resources.Why;
 
 public class TrafficService extends Application<TrafficServiceConfiguration> {
 

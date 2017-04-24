@@ -1,9 +1,10 @@
+package resources;
+
 import com.codahale.metrics.annotation.Timed;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
@@ -23,12 +24,9 @@ public class Why {
     @Path("{city}")
     @Timed
     public Response sayHello(@PathParam("city") String city) {
-//    public String sayHello(@PathParam("city") String city) {
-        //http://gametonight.in/{city}/json
         final WebTarget target = client.target(String.format("http://gametonight.in/%s/json", city));
         final Response response = target.request().get();
         return response;
-//        return "Because " + city;
     }
 
 
