@@ -2,24 +2,21 @@ package resources;
 
 import DTOs.ShowBoxEventDTO;
 import DTOs.WSCCEventDTO;
-import org.joda.time.DateTime;
+import DTOs.WsdotDTO;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -37,7 +34,7 @@ public class What {
     @Path("/wscc")
     public Set<WSCCEventDTO> getWsccEvents() throws Exception {
 //        http://www.wscc.com/upcoming-events
-//        http://www.wsdot.com/traffic/trafficalerts/
+//        http://www.wsdot.com/traffic/trafficalerts/PugetSound.aspx
 //        http://www.seattle.gov/event-calendar
 //        http://www.showboxpresents.com/events/all
         Document document = Jsoup.connect("http://www.wscc.com/upcoming-events").get();
@@ -60,14 +57,15 @@ public class What {
         }
     }
 
-    private Date dateFormatter(String rawInput) throws ParseException {
-        SimpleDateFormat rangeFormatter = new SimpleDateFormat("MMM d");
-        return rangeFormatter.parse(rawInput.replaceAll("(?<=\\d)(st|nd|rd|th)", "").trim());
+    private LocalDate dateFormatter(String rawInput) throws ParseException {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd yyyy");
+        String trim = rawInput.replaceAll("(?<=\\d)(st|nd|rd|th)", "").trim() + " " + Calendar.getInstance().get(Calendar.YEAR);
+        return LocalDate.parse(trim, formatter);
     }
 
     private Function<Element, WSCCEventDTO> elementWSCCEventDTOFunction = element -> {
-        Date startDate;
-        Date endDate = null;
+        LocalDate startDate;
+        LocalDate endDate = null;
         try {
             String dateRangeRaw = element.select("div.views-field-field-event-start-date-2").select("div.field-content").text();
             if (dateRangeRaw.contains("-")) {
@@ -108,6 +106,15 @@ public class What {
                 })
                 .collect(Collectors.toSet());
         return showboxEvents;
+    }
+
+    @GET
+    @Path("/wsdot")
+    public Set<WsdotDTO> getWsdotAlerts() throws Exception {
+        Document document = Jsoup.connect("http://www.wsdot.com/traffic/trafficalerts/pugetsound.aspx").get();
+        Element situationDiv = document.getElementsByClass("situationDiv").first();
+
+        return Collections.emptySet();
     }
 
 }

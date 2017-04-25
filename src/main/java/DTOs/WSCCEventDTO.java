@@ -3,19 +3,19 @@ package DTOs;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WSCCEventDTO {
     private final String eventName;
-    private final Date startDate;
-    private final Date endDate;
+    private final LocalDate startDate;
+    private final LocalDate endDate;
     private final Integer estAttendees;
 
     public WSCCEventDTO(@JsonProperty("eventName") String eventName,
-                        @JsonProperty("startDate") Date startDate,
-                        @JsonProperty("endDate") Date endDate,
+                        @JsonProperty("startDate") LocalDate startDate,
+                        @JsonProperty("endDate") LocalDate endDate,
                         @JsonProperty("estAttendees") Integer estAttendees) {
         this.eventName = eventName;
         this.startDate = startDate;
@@ -27,11 +27,11 @@ public class WSCCEventDTO {
         return eventName;
     }
 
-    public Date getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
