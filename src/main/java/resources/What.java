@@ -15,10 +15,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -113,8 +110,21 @@ public class What {
     public Set<WsdotDTO> getWsdotAlerts() throws Exception {
         Document document = Jsoup.connect("http://www.wsdot.com/traffic/trafficalerts/pugetsound.aspx").get();
         Element situationDiv = document.getElementsByClass("situationDiv").first();
-
-        return Collections.emptySet();
+        Elements traveAlerts = situationDiv.getElementsByClass("sitImpact");
+        Set<WsdotDTO> sitText = traveAlerts.stream()
+                .map(travelAlert -> {
+                    Element description = travelAlert.nextElementSibling().getElementsByClass("sitText").first();
+                    String text = description.select("span.bold").remove().first().text();
+                    description.select("a[href!=(http|https)://pugetsound.aspx?]").remove();
+                    String[] split = description.html().replaceAll("\n", "").split("<br>");
+                    String lastUpdatedRaw = Arrays.stream(split).filter(s -> s.contains("Last Updated: ")).map(s -> s.replaceAll("Last Updated: ", "").replaceAll("\n", "").trim()).findFirst().get();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/y h:m a");
+                    LocalDateTime lastUpdatedFormatted = LocalDateTime.parse(lastUpdatedRaw, formatter);
+                    String formattedLocation = split[split.length - 1].replaceAll("&nbsp;", " ").trim();
+                    String formattedDescription = text + " " + Arrays.stream(split).limit(split.length - 2).collect(Collectors.joining(" ")).trim();
+                    return new WsdotDTO(travelAlert.text(), formattedDescription, lastUpdatedFormatted, formattedLocation);
+                })
+                .collect(Collectors.toSet());
+        return sitText;
     }
-
 }
