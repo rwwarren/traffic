@@ -2,12 +2,12 @@ package DTOs;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ShowBoxEventDTO {
+
     private final LocalDateTime eventTime;
     private final String venue;
     private final String band;

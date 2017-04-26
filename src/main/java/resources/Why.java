@@ -30,7 +30,11 @@ public class Why {
     @GET
     @Path("{city}")
     @Timed
+    //TODO convert city to location
     public List<EventDTO> getEventsInCity(@PathParam("city") String city) {
+        //gametonight.in
+        //twitter
+        //google maps
         return eventManager.getEvents(city).stream().map(Event::toDTO).collect(Collectors.toList());
     }
 

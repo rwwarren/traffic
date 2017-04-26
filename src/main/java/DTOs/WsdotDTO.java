@@ -8,6 +8,7 @@ import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WsdotDTO {
+
     private final String severity;
     private final String description;
     private final LocalDateTime lastUpdated;

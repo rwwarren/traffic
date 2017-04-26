@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
-import model.Location;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EventDTO {

@@ -3,6 +3,9 @@ package resources;
 import DTOs.ShowBoxEventDTO;
 import DTOs.WSCCEventDTO;
 import DTOs.WsdotDTO;
+import collectors.ShowboxCollector;
+import collectors.WsccCollector;
+import collectors.WsdotCollector;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,7 +16,6 @@ import javax.ws.rs.core.MediaType;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
@@ -24,107 +26,36 @@ import java.util.stream.Collectors;
 @Produces(MediaType.APPLICATION_JSON)
 public class What {
 
-    public What() {
+//        http://www.wscc.com/upcoming-events
+//        http://www.wsdot.com/traffic/trafficalerts/PugetSound.aspx
+//        http://www.seattle.gov/event-calendar
+//        http://www.showboxpresents.com/events/all
+
+    private final ShowboxCollector showboxCollector;
+    private final WsdotCollector wsdotCollector;
+    private final WsccCollector wsccCollector;
+
+    public What(ShowboxCollector showboxCollector, WsdotCollector wsdotCollector, WsccCollector wsccCollector) {
+        this.showboxCollector = showboxCollector;
+        this.wsdotCollector = wsdotCollector;
+        this.wsccCollector = wsccCollector;
     }
 
     @GET
     @Path("/wscc")
     public Set<WSCCEventDTO> getWsccEvents() throws Exception {
-//        http://www.wscc.com/upcoming-events
-//        http://www.wsdot.com/traffic/trafficalerts/PugetSound.aspx
-//        http://www.seattle.gov/event-calendar
-//        http://www.showboxpresents.com/events/all
-        Document document = Jsoup.connect("http://www.wscc.com/upcoming-events").get();
-        Elements listOfEvents = document.select("div.view-content").select("h3");
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("M/dd");
-
-        Optional<Element> first = listOfEvents.stream()
-//                .filter(s -> s.childNode(0).toString().equals(simpleDateFormat.format(new Date()).toString()))
-                .filter(s -> s.childNode(0).toString().equals("4/25"))
-                .map(element -> element.nextElementSibling())
-                .findFirst();
-        if (first.isPresent()) {
-            Elements li = first.get().select("li");
-            Set<WSCCEventDTO> wsccEvents = li.stream()
-                    .map(elementWSCCEventDTOFunction)
-                    .collect(Collectors.toSet());
-            return wsccEvents;
-        } else {
-            return Collections.emptySet();
-        }
+        return wsccCollector.getWsccEvents();
     }
-
-    private LocalDate dateFormatter(String rawInput) throws ParseException {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd yyyy");
-        String trim = rawInput.replaceAll("(?<=\\d)(st|nd|rd|th)", "").trim() + " " + Calendar.getInstance().get(Calendar.YEAR);
-        return LocalDate.parse(trim, formatter);
-    }
-
-    private Function<Element, WSCCEventDTO> elementWSCCEventDTOFunction = element -> {
-        LocalDate startDate;
-        LocalDate endDate = null;
-        try {
-            String dateRangeRaw = element.select("div.views-field-field-event-start-date-2").select("div.field-content").text();
-            if (dateRangeRaw.contains("-")) {
-                String[] split = dateRangeRaw.split("-");
-                startDate = dateFormatter(split[0]);
-                endDate = dateFormatter(split[0]);
-            } else {
-                startDate = dateFormatter(dateRangeRaw);
-            }
-        } catch (ParseException e) {
-            throw new WebApplicationException(e.getCause());
-        }
-        String est = element.select("div.views-field-field-event-attendance").select("span.field-content").text().replaceAll(",", "");
-        return new WSCCEventDTO(
-                element.select("div.views-field-field-event-description").select("div.field-content").text(),
-                startDate,
-                endDate,
-                est.isEmpty() ? 0 : Integer.parseInt(est));
-    };
 
     @GET
     @Path("/showbox")
     public Set<ShowBoxEventDTO> getShowBoxEvents() throws Exception {
-        Document document = Jsoup.connect("http://www.showboxpresents.com/events/all").get();
-        Elements eventsList = document.getElementById("eventsList").getElementsByClass("entry");
-        Set<ShowBoxEventDTO> showboxEvents = eventsList.stream()
-                .filter(element -> element.attr("data-state").equals("WA"))
-                .map(element -> {
-                    Element infoElement = element.getElementsByClass("info").first();
-                    String bandName = infoElement.getElementsByClass("title").first().text();
-                    Element dateTime = infoElement.getElementsByClass("date-time-container").first();
-                    String date = dateTime.select("span.date").first().text();
-                    String time = dateTime.select("span.time").first().text().replaceAll("Show", "").trim();
-                    String venue = dateTime.select("span.venue").first().text();
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("E, MMM d, y h:m a");
-                    LocalDateTime formattedDate = LocalDateTime.parse(date + " " + time, formatter);
-                    return new ShowBoxEventDTO(formattedDate, venue, bandName);
-                })
-                .collect(Collectors.toSet());
-        return showboxEvents;
+        return showboxCollector.getShowBoxEvents();
     }
 
     @GET
     @Path("/wsdot")
     public Set<WsdotDTO> getWsdotAlerts() throws Exception {
-        Document document = Jsoup.connect("http://www.wsdot.com/traffic/trafficalerts/pugetsound.aspx").get();
-        Element situationDiv = document.getElementsByClass("situationDiv").first();
-        Elements traveAlerts = situationDiv.getElementsByClass("sitImpact");
-        Set<WsdotDTO> sitText = traveAlerts.stream()
-                .map(travelAlert -> {
-                    Element description = travelAlert.nextElementSibling().getElementsByClass("sitText").first();
-                    String text = description.select("span.bold").remove().first().text();
-                    description.select("a[href!=(http|https)://pugetsound.aspx?]").remove();
-                    String[] split = description.html().replaceAll("\n", "").split("<br>");
-                    String lastUpdatedRaw = Arrays.stream(split).filter(s -> s.contains("Last Updated: ")).map(s -> s.replaceAll("Last Updated: ", "").replaceAll("\n", "").trim()).findFirst().get();
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/y h:m a");
-                    LocalDateTime lastUpdatedFormatted = LocalDateTime.parse(lastUpdatedRaw, formatter);
-                    String formattedLocation = split[split.length - 1].replaceAll("&nbsp;", " ").trim();
-                    String formattedDescription = text + " " + Arrays.stream(split).limit(split.length - 2).collect(Collectors.joining(" ")).trim();
-                    return new WsdotDTO(travelAlert.text(), formattedDescription, lastUpdatedFormatted, formattedLocation);
-                })
-                .collect(Collectors.toSet());
-        return sitText;
+       return wsdotCollector.getWsdotEvents();
     }
 }

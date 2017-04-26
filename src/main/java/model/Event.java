@@ -1,11 +1,13 @@
 package model;
 
 import DTOs.EventDTO;
+import DTOs.LocationDTO;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class Event {
 
+    //Add amount attendees?
     private final String name;
     private final String description;
     private final LocalDate date;
@@ -21,7 +23,8 @@ public class Event {
     }
 
     public EventDTO toDTO() {
-        return new EventDTO(name, description, date, time, location.toDTO());
+        final LocationDTO locationDTO = location == null ? null : location.toDTO();
+        return new EventDTO(name, description, date, time, locationDTO);
     }
 
 }

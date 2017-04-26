@@ -6,6 +6,7 @@ import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GameTonightDTO {
+
     private final boolean game_tonight;
     private final Map<String, GameTonightInfoDTO> today;
 

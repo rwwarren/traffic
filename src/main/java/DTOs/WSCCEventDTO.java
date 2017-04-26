@@ -8,6 +8,7 @@ import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WSCCEventDTO {
+
     private final String eventName;
     private final LocalDate startDate;
     private final LocalDate endDate;
