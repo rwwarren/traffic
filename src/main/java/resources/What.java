@@ -6,31 +6,25 @@ import DTOs.WsdotDTO;
 import collectors.ShowboxCollector;
 import collectors.WsccCollector;
 import collectors.WsdotCollector;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import com.google.maps.GeoApiContext;
+import com.google.maps.GeocodingApi;
+import com.google.maps.model.GeocodingResult;
+import com.google.maps.model.LatLng;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.io.FileReader;
+import java.util.Set;
 
 @Path("/what")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class What {
-
-//        http://www.wscc.com/upcoming-events
-//        http://www.wsdot.com/traffic/trafficalerts/PugetSound.aspx
-//        http://www.seattle.gov/event-calendar
-//        http://www.showboxpresents.com/events/all
-
     private final ShowboxCollector showboxCollector;
     private final WsdotCollector wsdotCollector;
     private final WsccCollector wsccCollector;
@@ -56,6 +50,29 @@ public class What {
     @GET
     @Path("/wsdot")
     public Set<WsdotDTO> getWsdotAlerts() throws Exception {
-       return wsdotCollector.getWsdotEvents();
+        return wsdotCollector.getWsdotEvents();
+    }
+
+    @GET
+    @Path("/porch-latlong")
+    public LatLng getPorchLatLong() throws Exception {
+        String apiKey = getApiKey();
+        GeoApiContext context = new GeoApiContext().setApiKey(apiKey);
+        GeocodingResult[] await = GeocodingApi.geocode(context, "2200 1st Ave South Seattle WA 98134").await();
+        return await[0].geometry.location;
+    }
+
+    @Deprecated
+//    TODO: This should probably be in the YAML not a json file
+    private String getApiKey() throws Exception {
+        JSONParser parser = new JSONParser();
+        try {
+            Object parse = parser.parse(new FileReader("src/main/resources/config/creds.json"));
+            JSONObject jsonObject = (JSONObject) parse;
+            String passkey = (String) jsonObject.get("google_key");
+            return passkey;
+        } catch (Exception e) {
+            throw new Exception("Where's your API Key broh");
+        }
     }
 }
