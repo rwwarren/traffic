@@ -58,8 +58,11 @@ public class What {
     public LatLng getPorchLatLong() throws Exception {
         String apiKey = getApiKey();
         GeoApiContext context = new GeoApiContext().setApiKey(apiKey);
-        GeocodingResult[] await = GeocodingApi.geocode(context, "2200 1st Ave South Seattle WA 98134").await();
-        return await[0].geometry.location;
+        GeocodingResult[] work = GeocodingApi.geocode(context, "2200 1st Ave South Seattle WA 98134").await();
+        GeocodingResult[] home = GeocodingApi.geocode(context, getHomeAddress()).await();
+        double distance = distance(home[0].geometry.location, work[0].geometry.location);
+
+        return work[0].geometry.location;
     }
 
     @Deprecated
@@ -74,5 +77,33 @@ public class What {
         } catch (Exception e) {
             throw new Exception("Where's your API Key broh");
         }
+    }
+
+    @Deprecated
+//    TODO: This should probably be in the YAML not a json file
+    private String getHomeAddress() throws Exception {
+        JSONParser parser = new JSONParser();
+        try {
+            Object parse = parser.parse(new FileReader("src/main/resources/config/creds.json"));
+            JSONObject jsonObject = (JSONObject) parse;
+            String homeAddress = (String) jsonObject.get("home");
+            return homeAddress;
+        } catch (Exception e) {
+            throw new Exception("Where's your home address broh");
+        }
+    }
+
+    //    Haversine method
+    private double distance(LatLng start, LatLng end) {
+        final int R = 6371;
+        double lat = Math.toRadians(end.lat - start.lat);
+        double lng = Math.toRadians(end.lng - start.lng);
+        double a = Math.sin(lat / 2) * Math.sin(lat / 2)
+                + Math.cos(Math.toRadians(start.lat)) * Math.cos(Math.toRadians(end.lat))
+                * Math.sin(lng / 2) * Math.sin(lng / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000;
+        distance = Math.pow(distance, 2);
+        return Math.sqrt(distance);
     }
 }
