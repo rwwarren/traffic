@@ -12,6 +12,7 @@
         <jsoup.version>1.10.2</jsoup.version>
         <google.maps.version>0.1.20</google.maps.version>
         <json-simple.version>1.1.1</json-simple.version>
+        <sqlite.jdbc.version>3.16.1</sqlite.jdbc.version>
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -42,6 +43,11 @@
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>${json-simple.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>${sqlite.jdbc.version}</version>
         </dependency>
     </dependencies>
 

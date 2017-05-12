@@ -12,6 +12,7 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
+import dao.EventDAO;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -21,6 +22,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.io.FileReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.Set;
 
 @Path("/what")
@@ -61,6 +64,20 @@ public class What {
     @Path("/stranger")
     public Set<StrangerEventDTO> getStrangerEvents() throws Exception {
         return strangerCollector.getStrangerEvents();
+    }
+
+    @GET
+    @Path("/db")
+    public String testDb() {
+        String toReturn = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection c = DriverManager.getConnection("jdbc:sqlite:src/main/resources/test.db");
+            toReturn = new EventDAO(c).getEvent();
+        } catch (Exception e) {
+            System.err.println("NOT WORKING");
+        }
+        return toReturn;
     }
 
     @GET
