@@ -1,7 +1,4 @@
-import collectors.GameTonightCollector;
-import collectors.ShowboxCollector;
-import collectors.WsccCollector;
-import collectors.WsdotCollector;
+import collectors.*;
 import io.dropwizard.Application;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Environment;
@@ -23,8 +20,9 @@ public class TrafficService extends Application<TrafficServiceConfiguration> {
         final ShowboxCollector showboxCollector = new ShowboxCollector();
         final WsdotCollector wsdotCollector = new WsdotCollector();
         final WsccCollector wsccCollector = new WsccCollector();
+        final StrangerCollector strangerCollector = new StrangerCollector();
         final EventManager eventManager = new EventManager(gameTonightCollector, showboxCollector, wsdotCollector, wsccCollector);
         environment.jersey().register(new Why(eventManager));
-        environment.jersey().register(new What(showboxCollector, wsdotCollector, wsccCollector));
+        environment.jersey().register(new What(showboxCollector, wsdotCollector, wsccCollector, strangerCollector));
     }
 }

@@ -1,18 +1,18 @@
 package collectors;
 
 import DTOs.ShowBoxEventDTO;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ShowboxCollector {
 
@@ -38,8 +38,7 @@ public class ShowboxCollector {
                     .filter(current -> current.getEventTime().toLocalDate().equals(today))
                     .collect(Collectors.toSet());
         } catch (IOException e) {
-            return new HashSet<>();
+            return Collections.EMPTY_SET;
         }
     }
-
 }

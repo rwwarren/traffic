@@ -1,9 +1,11 @@
 package resources;
 
 import DTOs.ShowBoxEventDTO;
+import DTOs.StrangerEventDTO;
 import DTOs.WSCCEventDTO;
 import DTOs.WsdotDTO;
 import collectors.ShowboxCollector;
+import collectors.StrangerCollector;
 import collectors.WsccCollector;
 import collectors.WsdotCollector;
 import com.google.maps.GeoApiContext;
@@ -28,11 +30,13 @@ public class What {
     private final ShowboxCollector showboxCollector;
     private final WsdotCollector wsdotCollector;
     private final WsccCollector wsccCollector;
+    private final StrangerCollector strangerCollector;
 
-    public What(ShowboxCollector showboxCollector, WsdotCollector wsdotCollector, WsccCollector wsccCollector) {
+    public What(ShowboxCollector showboxCollector, WsdotCollector wsdotCollector, WsccCollector wsccCollector, StrangerCollector strangerCollector) {
         this.showboxCollector = showboxCollector;
         this.wsdotCollector = wsdotCollector;
         this.wsccCollector = wsccCollector;
+        this.strangerCollector = strangerCollector;
     }
 
     @GET
@@ -51,6 +55,12 @@ public class What {
     @Path("/wsdot")
     public Set<WsdotDTO> getWsdotAlerts() throws Exception {
         return wsdotCollector.getWsdotEvents();
+    }
+
+    @GET
+    @Path("/stranger")
+    public Set<StrangerEventDTO> getStrangerEvents() throws Exception {
+        return strangerCollector.getStrangerEvents();
     }
 
     @GET
