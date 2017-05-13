@@ -5,6 +5,7 @@ import io.dropwizard.setup.Environment;
 import javax.ws.rs.client.Client;
 
 import manager.EventManager;
+import resources.ConnectionHealthCheck;
 import resources.What;
 import resources.Why;
 
@@ -14,7 +15,7 @@ public class TrafficService extends Application<TrafficServiceConfiguration> {
         new TrafficService().run(args);
     }
 
-    public void run(TrafficServiceConfiguration trafficServiceConfiguration, Environment environment) throws Exception {
+    public void run(TrafficServiceConfiguration config, Environment environment) throws Exception {
         final Client client = new JerseyClientBuilder(environment).build("client");
         final GameTonightCollector gameTonightCollector = new GameTonightCollector(client);
         final ShowboxCollector showboxCollector = new ShowboxCollector();
@@ -23,6 +24,10 @@ public class TrafficService extends Application<TrafficServiceConfiguration> {
         final StrangerCollector strangerCollector = new StrangerCollector();
         final EventManager eventManager = new EventManager(gameTonightCollector, showboxCollector, wsdotCollector, wsccCollector);
         environment.jersey().register(new Why(eventManager));
-        environment.jersey().register(new What(showboxCollector, wsdotCollector, wsccCollector, strangerCollector));
+        environment.jersey().register(new What(showboxCollector, wsdotCollector, wsccCollector, strangerCollector, config.getGoogleApiKey()));
+
+        final ConnectionHealthCheck healthCheck = new ConnectionHealthCheck(config.getGoogleApiKey());
+        environment.healthChecks().register("connections", healthCheck);
+
     }
 }

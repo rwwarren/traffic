@@ -27,4 +27,23 @@ public class Event {
         return new EventDTO(name, description, date, time, locationDTO);
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public LocalTime getTime() {
+        return time;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
 }

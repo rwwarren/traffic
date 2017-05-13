@@ -1,5 +1,6 @@
 package resources;
 
+import DTOs.DistanceDTO;
 import DTOs.ShowBoxEventDTO;
 import DTOs.StrangerEventDTO;
 import DTOs.WSCCEventDTO;
@@ -13,6 +14,9 @@ import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 import dao.EventDAO;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.POST;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -30,16 +34,19 @@ import java.util.Set;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class What {
+
     private final ShowboxCollector showboxCollector;
     private final WsdotCollector wsdotCollector;
     private final WsccCollector wsccCollector;
     private final StrangerCollector strangerCollector;
+    private final String googleApiKey;
 
-    public What(ShowboxCollector showboxCollector, WsdotCollector wsdotCollector, WsccCollector wsccCollector, StrangerCollector strangerCollector) {
+    public What(ShowboxCollector showboxCollector, WsdotCollector wsdotCollector, WsccCollector wsccCollector, StrangerCollector strangerCollector, String googleApiKey) {
         this.showboxCollector = showboxCollector;
         this.wsdotCollector = wsdotCollector;
         this.wsccCollector = wsccCollector;
         this.strangerCollector = strangerCollector;
+        this.googleApiKey = googleApiKey;
     }
 
     @GET
@@ -80,45 +87,45 @@ public class What {
         return toReturn;
     }
 
-    @GET
+    @POST
     @Path("/porch-latlong")
-    public LatLng getPorchLatLong() throws Exception {
-        String apiKey = getApiKey();
-        GeoApiContext context = new GeoApiContext().setApiKey(apiKey);
-        GeocodingResult[] work = GeocodingApi.geocode(context, "2200 1st Ave South Seattle WA 98134").await();
-        GeocodingResult[] home = GeocodingApi.geocode(context, getHomeAddress()).await();
+    public LatLng getPorchLatLong(@Valid @NotNull DistanceDTO request) throws Exception {
+        GeoApiContext context = new GeoApiContext().setApiKey(googleApiKey);
+        final String address = "2200 1st Ave South Seattle WA 98134";
+        GeocodingResult[] work = GeocodingApi.geocode(context, request.getStartAddress()).await();
+        GeocodingResult[] home = GeocodingApi.geocode(context, request.getEndAddress()).await();
         double distance = distance(home[0].geometry.location, work[0].geometry.location);
 
         return work[0].geometry.location;
     }
 
-    @Deprecated
+//    @Deprecated
 //    TODO: This should probably be in the YAML not a json file
-    private String getApiKey() throws Exception {
-        JSONParser parser = new JSONParser();
-        try {
-            Object parse = parser.parse(new FileReader("src/main/resources/config/creds.json"));
-            JSONObject jsonObject = (JSONObject) parse;
-            String passkey = (String) jsonObject.get("google_key");
-            return passkey;
-        } catch (Exception e) {
-            throw new Exception("Where's your API Key broh");
-        }
-    }
+//    private String getApiKey() throws Exception {
+//        JSONParser parser = new JSONParser();
+//        try {
+//            Object parse = parser.parse(new FileReader("src/main/resources/config/creds.json"));
+//            JSONObject jsonObject = (JSONObject) parse;
+//            String passkey = (String) jsonObject.get("google_key");
+//            return passkey;
+//        } catch (Exception e) {
+//            throw new Exception("Where's your API Key broh");
+//        }
+//    }
 
-    @Deprecated
-//    TODO: This should probably be in the YAML not a json file
-    private String getHomeAddress() throws Exception {
-        JSONParser parser = new JSONParser();
-        try {
-            Object parse = parser.parse(new FileReader("src/main/resources/config/creds.json"));
-            JSONObject jsonObject = (JSONObject) parse;
-            String homeAddress = (String) jsonObject.get("home");
-            return homeAddress;
-        } catch (Exception e) {
-            throw new Exception("Where's your home address broh");
-        }
-    }
+//    @Deprecated
+////    TODO: This should probably be in the YAML not a json file
+//    private String getHomeAddress() throws Exception {
+//        JSONParser parser = new JSONParser();
+//        try {
+//            Object parse = parser.parse(new FileReader("src/main/resources/config/creds.json"));
+//            JSONObject jsonObject = (JSONObject) parse;
+//            String homeAddress = (String) jsonObject.get("home");
+//            return homeAddress;
+//        } catch (Exception e) {
+//            throw new Exception("Where's your home address broh");
+//        }
+//    }
 
     //    Haversine method
     private double distance(LatLng start, LatLng end) {

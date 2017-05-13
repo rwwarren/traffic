@@ -4,6 +4,7 @@ import collectors.GameTonightCollector;
 import collectors.ShowboxCollector;
 import collectors.WsccCollector;
 import collectors.WsdotCollector;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,12 +25,12 @@ public class EventManager {
     }
 
     public List<Event> getEvents(String city) {
-        final ArrayList<Event> events = new ArrayList<>();
+        final List<Event> events = new ArrayList<>();
         events.addAll(gameTonightCollector.getFromGameTonight(city));
         events.addAll(showboxCollector.getShowBoxEvents().stream().map(current -> new Event(current.getBand(), current.getVenue(), current.getEventTime().toLocalDate(), current.getEventTime().toLocalTime(), null)).collect(Collectors.toList()));
         events.addAll(wsdotCollector.getWsdotEvents().stream().map(current -> new Event("", current.getDescription(), current.getLastUpdated().toLocalDate(), current.getLastUpdated().toLocalTime(), null)).collect(Collectors.toList()));
         events.addAll(wsccCollector.getWsccEvents().stream().map(current -> new Event(current.getEventName(), "" + current.getEstAttendees(), current.getStartDate(), null, null)).collect(Collectors.toList()));
-        return events;
+        return events.stream().filter(current -> current.getTime().isAfter(LocalTime.now())).collect(Collectors.toList());
     }
 
 }
