@@ -1,10 +1,10 @@
 package resources;
 
 import DTOs.DistanceDTO;
-import DTOs.ShowBoxEventDTO;
-import DTOs.StrangerEventDTO;
-import DTOs.WSCCEventDTO;
-import DTOs.WsdotDTO;
+import DTOs.scrape_dtos.ShowBoxEventDTO;
+import DTOs.scrape_dtos.StrangerEventDTO;
+import DTOs.scrape_dtos.WSCCEventDTO;
+import DTOs.scrape_dtos.WsdotDTO;
 import collectors.ShowboxCollector;
 import collectors.StrangerCollector;
 import collectors.WsccCollector;
@@ -18,12 +18,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Set;

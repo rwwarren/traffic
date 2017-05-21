@@ -1,12 +1,11 @@
 package collectors;
 
-import DTOs.WsdotDTO;
-import java.io.IOException;
+import DTOs.scrape_dtos.WsdotDTO;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.jsoup.Jsoup;

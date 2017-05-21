@@ -1,7 +1,7 @@
 package collectors;
 
-import DTOs.WSCCEventDTO;
-import java.io.IOException;
+import DTOs.scrape_dtos.WSCCEventDTO;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;

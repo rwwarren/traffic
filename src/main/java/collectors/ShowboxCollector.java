@@ -1,6 +1,6 @@
 package collectors;
 
-import DTOs.ShowBoxEventDTO;
+import DTOs.scrape_dtos.ShowBoxEventDTO;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

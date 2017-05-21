@@ -1,13 +1,12 @@
 package collectors;
 
-import DTOs.StrangerEventDTO;
+import DTOs.scrape_dtos.StrangerEventDTO;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import javax.ws.rs.WebApplicationException;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
