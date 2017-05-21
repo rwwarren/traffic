@@ -16,15 +16,13 @@ import com.google.maps.model.LatLng;
 import dao.EventDAO;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.POST;
+import javax.ws.rs.*;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -51,26 +49,30 @@ public class What {
 
     @GET
     @Path("/wscc")
-    public Set<WSCCEventDTO> getWsccEvents() throws Exception {
-        return wsccCollector.getWsccEvents();
+    public Response getWsccEvents() throws Exception {
+        Set<WSCCEventDTO> wsccEvents = wsccCollector.getWsccEvents();
+        return Response.ok(wsccEvents).build();
     }
 
     @GET
     @Path("/showbox")
-    public Set<ShowBoxEventDTO> getShowBoxEvents() throws Exception {
-        return showboxCollector.getShowBoxEvents();
+    public Response getShowBoxEvents(@QueryParam("todayOnly") Boolean todayOnly) throws Exception {
+        Set<ShowBoxEventDTO> showBoxEvents = showboxCollector.getShowBoxEvents(todayOnly);
+        return Response.ok(showBoxEvents).build();
     }
 
     @GET
     @Path("/wsdot")
-    public Set<WsdotDTO> getWsdotAlerts() throws Exception {
-        return wsdotCollector.getWsdotEvents();
+    public Response getWsdotAlerts() throws Exception {
+        Set<WsdotDTO> wsdotEvents = wsdotCollector.getWsdotEvents();
+        return Response.ok(wsdotEvents).build();
     }
 
     @GET
     @Path("/stranger")
-    public Set<StrangerEventDTO> getStrangerEvents() throws Exception {
-        return strangerCollector.getStrangerEvents();
+    public Response getStrangerEvents() throws Exception {
+        Set<StrangerEventDTO> strangerEvents = strangerCollector.getStrangerEvents();
+        return Response.ok(strangerEvents).build();
     }
 
     @GET

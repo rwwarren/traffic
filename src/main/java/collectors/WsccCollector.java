@@ -42,8 +42,8 @@ public class WsccCollector {
             } else {
                 return Collections.emptySet();
             }
-        } catch (IOException e) {
-            return Collections.emptySet();
+        } catch (Exception e) {
+            throw new WebApplicationException(e);
         }
     }
 

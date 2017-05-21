@@ -6,6 +6,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import javax.ws.rs.WebApplicationException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -21,8 +22,8 @@ public class StrangerCollector {
             Elements eventsList = document.getElementsByClass("calendar-post row");
             Set<StrangerEventDTO> strangerEvents = eventsList.stream().map(s -> mapper(s)).collect(Collectors.toSet());
             return strangerEvents;
-        } catch (IOException e) {
-            return Collections.EMPTY_SET;
+        } catch (Exception e) {
+            throw new WebApplicationException(e);
         }
     }
 

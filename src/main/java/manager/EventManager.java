@@ -27,7 +27,7 @@ public class EventManager {
     public List<Event> getEvents(String city) {
         final List<Event> events = new ArrayList<>();
         events.addAll(gameTonightCollector.getFromGameTonight(city));
-        events.addAll(showboxCollector.getShowBoxEvents().stream().map(current -> new Event(current.getBand(), current.getVenue(), current.getEventTime().toLocalDate(), current.getEventTime().toLocalTime(), null)).collect(Collectors.toList()));
+        events.addAll(showboxCollector.getShowBoxEvents(true).stream().map(current -> new Event(current.getBand(), current.getVenue(), current.getEventTime().toLocalDate(), current.getEventTime().toLocalTime(), null)).collect(Collectors.toList()));
         events.addAll(wsdotCollector.getWsdotEvents().stream().map(current -> new Event("", current.getDescription(), current.getLastUpdated().toLocalDate(), current.getLastUpdated().toLocalTime(), null)).collect(Collectors.toList()));
         events.addAll(wsccCollector.getWsccEvents().stream().map(current -> new Event(current.getEventName(), "" + current.getEstAttendees(), current.getStartDate(), null, null)).collect(Collectors.toList()));
         return events.stream().filter(current -> current.getTime().isAfter(LocalTime.now())).collect(Collectors.toList());

@@ -14,6 +14,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import javax.ws.rs.WebApplicationException;
+
 public class WsdotCollector {
 
     public Set<WsdotDTO> getWsdotEvents() {
@@ -37,8 +39,8 @@ public class WsdotCollector {
                     })
                     .filter(current -> current.getLastUpdated().toLocalDate().equals(today))
                     .collect(Collectors.toSet());
-        } catch (IOException e) {
-            return new HashSet<>();
+        } catch (Exception e) {
+            throw new WebApplicationException(e);
         }
     }
 }
