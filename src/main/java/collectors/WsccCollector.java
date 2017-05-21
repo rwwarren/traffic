@@ -1,6 +1,6 @@
 package collectors;
 
-import DTOs.scrape_dtos.WSCCEventDTO;
+import dtos.scrape_dtos.WSCCEventDTO;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

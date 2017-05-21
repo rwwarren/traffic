@@ -1,10 +1,10 @@
 package resources;
 
-import DTOs.DistanceDTO;
-import DTOs.scrape_dtos.ShowBoxEventDTO;
-import DTOs.scrape_dtos.StrangerEventDTO;
-import DTOs.scrape_dtos.WSCCEventDTO;
-import DTOs.scrape_dtos.WsdotDTO;
+import dtos.DistanceDTO;
+import dtos.scrape_dtos.ShowBoxEventDTO;
+import dtos.scrape_dtos.StrangerEventDTO;
+import dtos.scrape_dtos.WSCCEventDTO;
+import dtos.scrape_dtos.WsdotDTO;
 import collectors.ShowboxCollector;
 import collectors.StrangerCollector;
 import collectors.WsccCollector;

@@ -1,4 +1,4 @@
-package DTOs.scrape_dtos;
+package dtos.scrape_dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

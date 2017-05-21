@@ -1,6 +1,6 @@
 package collectors;
 
-import DTOs.GameTonightDTO;
+import dtos.GameTonightDTO;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

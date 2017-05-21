@@ -1,6 +1,6 @@
 package collectors;
 
-import DTOs.scrape_dtos.WsdotDTO;
+import dtos.scrape_dtos.WsdotDTO;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

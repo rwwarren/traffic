@@ -1,6 +1,6 @@
 package model;
 
-import DTOs.LocationDTO;
+import dtos.LocationDTO;
 
 public class Location {
 

@@ -1,6 +1,6 @@
 package collectors;
 
-import DTOs.scrape_dtos.StrangerEventDTO;
+import dtos.scrape_dtos.StrangerEventDTO;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

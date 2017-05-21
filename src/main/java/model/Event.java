@@ -1,7 +1,7 @@
 package model;
 
-import DTOs.EventDTO;
-import DTOs.LocationDTO;
+import dtos.EventDTO;
+import dtos.LocationDTO;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
