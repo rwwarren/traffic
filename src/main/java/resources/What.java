@@ -99,34 +99,6 @@ public class What {
         return work[0].geometry.location;
     }
 
-//    @Deprecated
-//    TODO: This should probably be in the YAML not a json file
-//    private String getApiKey() throws Exception {
-//        JSONParser parser = new JSONParser();
-//        try {
-//            Object parse = parser.parse(new FileReader("src/main/resources/config/creds.json"));
-//            JSONObject jsonObject = (JSONObject) parse;
-//            String passkey = (String) jsonObject.get("google_key");
-//            return passkey;
-//        } catch (Exception e) {
-//            throw new Exception("Where's your API Key broh");
-//        }
-//    }
-
-//    @Deprecated
-////    TODO: This should probably be in the YAML not a json file
-//    private String getHomeAddress() throws Exception {
-//        JSONParser parser = new JSONParser();
-//        try {
-//            Object parse = parser.parse(new FileReader("src/main/resources/config/creds.json"));
-//            JSONObject jsonObject = (JSONObject) parse;
-//            String homeAddress = (String) jsonObject.get("home");
-//            return homeAddress;
-//        } catch (Exception e) {
-//            throw new Exception("Where's your home address broh");
-//        }
-//    }
-
     //    Haversine method
     private double distance(LatLng start, LatLng end) {
         final int R = 6371;
