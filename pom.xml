@@ -12,10 +12,12 @@
         <jsoup.version>1.10.2</jsoup.version>
         <google.maps.version>0.1.20</google.maps.version>
         <json-simple.version>1.1.1</json-simple.version>
-        <sqlite.jdbc.version>3.16.1</sqlite.jdbc.version>
+        <!--<sqlite.jdbc.version>3.16.1</sqlite.jdbc.version>-->
+        <flyway-core.version>4.2.0</flyway-core.version>
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <dropwizard-flyway.version>1.0.0-1</dropwizard-flyway.version>
     </properties>
 
     <dependencies>
@@ -27,6 +29,11 @@
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-client</artifactId>
+            <version>${dropwizard.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-db</artifactId>
             <version>${dropwizard.version}</version>
         </dependency>
         <dependency>
@@ -44,11 +51,22 @@
             <artifactId>json-simple</artifactId>
             <version>${json-simple.version}</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.xerial</groupId>-->
+            <!--<artifactId>sqlite-jdbc</artifactId>-->
+            <!--<version>${sqlite.jdbc.version}</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.flywaydb</groupId>-->
+            <!--<artifactId>flyway-core</artifactId>-->
+            <!--<version>${flyway-core.version}</version>-->
+        <!--</dependency>-->
         <dependency>
-            <groupId>org.xerial</groupId>
-            <artifactId>sqlite-jdbc</artifactId>
-            <version>${sqlite.jdbc.version}</version>
+            <groupId>io.dropwizard.modules</groupId>
+            <artifactId>dropwizard-flyway</artifactId>
+            <version>${dropwizard-flyway.version}</version>
         </dependency>
+
     </dependencies>
 
     <build>
