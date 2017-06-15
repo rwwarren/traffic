@@ -1,9 +1,15 @@
 package com.wrixton;
 
 import com.wrixton.collectors.*;
+import bundles.FlywayBundle;
+import bundles.configuration.FlywayBundleConfiguration;
 import io.dropwizard.Application;
 import io.dropwizard.client.JerseyClientBuilder;
+import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.flyway.FlywayFactory;
+import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import java.util.Collections;
 import javax.ws.rs.client.Client;
 
 import com.wrixton.manager.EventManager;
@@ -13,11 +19,41 @@ import com.wrixton.resources.Why;
 
 public class TrafficService extends Application<TrafficServiceConfiguration> {
 
+//    public FlywayBundle flywayBundle = new FlywayBundle("flyway-bundle")
+//    public FlywayBundle<TrafficServiceConfiguration> flywayBundle = new FlywayBundle<TrafficServiceConfiguration>() {
+//        @Override
+//        public DataSourceFactory getDataSourceFactory(TrafficServiceConfiguration configuration) {
+//            return configuration.getDataSourceFactory();
+//        }
+//
+//        @Override
+//        public FlywayFactory getFlywayFactory(TrafficServiceConfiguration configuration) {
+//            return configuration.getFlywayFactory();
+//        }
+//    };
+
+ public FlywayBundle<TrafficServiceConfiguration> flywayBundle = new FlywayBundle<TrafficServiceConfiguration>("traffic-flyway") {
+     @Override
+     protected FlywayBundleConfiguration extractBundleConfiguration(TrafficServiceConfiguration config) throws Exception {
+         FlywayBundleConfiguration flywayBundleConfiguration = new FlywayBundleConfiguration();
+         flywayBundleConfiguration.setDataSourceFactory(config.getDatabaseFlyway());
+         flywayBundleConfiguration.setSchemas(Collections.singletonList("traffic"));
+         return flywayBundleConfiguration;
+     }
+ };
+
+    @Override
+    public void initialize(Bootstrap<TrafficServiceConfiguration> bootstrap) {
+//        super.initialize(bootstrap);
+        bootstrap.addBundle(flywayBundle);
+    }
+
     public static void main(String[] args) throws Exception {
         new TrafficService().run(args);
     }
 
     public void run(TrafficServiceConfiguration config, Environment environment) throws Exception {
+
         final Client client = new JerseyClientBuilder(environment).build("client");
         final GameTonightCollector gameTonightCollector = new GameTonightCollector(client);
         final ShowboxCollector showboxCollector = new ShowboxCollector();
