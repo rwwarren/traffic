@@ -4,3 +4,5 @@ target/*
 .idea
 target/
 *.yaml
+*.pid
+*.log
