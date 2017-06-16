@@ -3,6 +3,7 @@ package com.wrixton;
 import com.wrixton.collectors.*;
 import bundles.FlywayBundle;
 import bundles.configuration.FlywayBundleConfiguration;
+import com.wrixton.resources.Main;
 import io.dropwizard.Application;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.db.DataSourceFactory;
