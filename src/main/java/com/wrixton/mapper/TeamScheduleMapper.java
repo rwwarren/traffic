@@ -10,6 +10,6 @@ import java.sql.SQLException;
 public class TeamScheduleMapper implements ResultSetMapper<TeamInfo> {
     @Override
     public TeamInfo map(int i, ResultSet rs, StatementContext statementContext) throws SQLException {
-        return new TeamInfo(rs.getString("team_name"), rs.getString("schedule_url"));
+        return new TeamInfo(rs.getLong("id"), rs.getString("team_name"), rs.getString("schedule_url"));
     }
 }

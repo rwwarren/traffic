@@ -2,6 +2,9 @@ package com.wrixton.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import com.wrixton.dao.CityTeamsDAO;
+import com.wrixton.dao.TeamScheduleDAO;
+import com.wrixton.dtos.CityTeamDTO;
+import com.wrixton.model.CityTeam;
 import com.wrixton.model.CityTeams;
 import com.wrixton.model.TeamInfo;
 
@@ -15,9 +18,11 @@ import java.util.List;
 public class City {
 
     private final CityTeamsDAO cityTeamsDAO;
+    private final TeamScheduleDAO teamScheduleDAO;
 
-    public City(CityTeamsDAO cityTeamsDAO) {
+    public City(CityTeamsDAO cityTeamsDAO, TeamScheduleDAO teamScheduleDAO) {
         this.cityTeamsDAO = cityTeamsDAO;
+        this.teamScheduleDAO = teamScheduleDAO;
     }
 
     @GET
@@ -26,6 +31,14 @@ public class City {
     public CityTeams getByTeamName(@PathParam("cityName") String cityName) throws Exception {
         List<String> teams = cityTeamsDAO.getCityTeams(cityName);
         return new CityTeams(cityName, teams);
+    }
+
+    @POST
+    @Path("/add")
+    @Timed
+    public CityTeamDTO addTeamInfo(CityTeamDTO cityTeam) throws Exception {
+        TeamInfo teamInfo = teamScheduleDAO.getTeamSchedule(cityTeam.getTeamName());
+        return cityTeamsDAO.addCityTeam(new CityTeam(cityTeam.getCityName(), teamInfo.getTeamId())) == 1 ? cityTeam : null;
     }
 
 }

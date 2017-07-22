@@ -73,7 +73,7 @@ public class TrafficService extends Application<TrafficServiceConfiguration> {
         environment.jersey().register(new Why(eventManager));
         environment.jersey().register(new What(showboxCollector, wsdotCollector, wsccCollector, strangerCollector, config.getGoogleApiKey()));
         environment.jersey().register(new Team(teamScheduleDAO));
-        environment.jersey().register(new City(cityTeamsDAO));
+        environment.jersey().register(new City(cityTeamsDAO, teamScheduleDAO));
 
         final ConnectionHealthCheck healthCheck = new ConnectionHealthCheck(config.getGoogleApiKey());
         environment.healthChecks().register("connections", healthCheck);
