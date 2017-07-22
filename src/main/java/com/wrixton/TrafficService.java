@@ -3,6 +3,7 @@ package com.wrixton;
 import com.wrixton.collectors.*;
 import bundles.FlywayBundle;
 import bundles.configuration.FlywayBundleConfiguration;
+import com.wrixton.dao.CityTeamsDAO;
 import com.wrixton.dao.TeamScheduleDAO;
 import com.wrixton.resources.*;
 import io.dropwizard.Application;
@@ -66,11 +67,13 @@ public class TrafficService extends Application<TrafficServiceConfiguration> {
         final StrangerCollector strangerCollector = new StrangerCollector();
         final EventManager eventManager = new EventManager(gameTonightCollector, showboxCollector, wsdotCollector, wsccCollector);
         final TeamScheduleDAO teamScheduleDAO = jdbi.onDemand(TeamScheduleDAO.class);
+        final CityTeamsDAO cityTeamsDAO = jdbi.onDemand(CityTeamsDAO.class);
 
         environment.jersey().register(new Main());
         environment.jersey().register(new Why(eventManager));
         environment.jersey().register(new What(showboxCollector, wsdotCollector, wsccCollector, strangerCollector, config.getGoogleApiKey()));
         environment.jersey().register(new Team(teamScheduleDAO));
+        environment.jersey().register(new City(cityTeamsDAO));
 
         final ConnectionHealthCheck healthCheck = new ConnectionHealthCheck(config.getGoogleApiKey());
         environment.healthChecks().register("connections", healthCheck);
