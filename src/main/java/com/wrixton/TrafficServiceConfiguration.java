@@ -18,13 +18,18 @@ public class TrafficServiceConfiguration extends Configuration {
     @JsonProperty
     private DataSourceFactory databaseFlyway;
 
+    @Valid
+    @NotNull
+    @JsonProperty
+    private DataSourceFactory database;
+
     @JsonProperty
     public String getGoogleApiKey() {
         return googleApiKey;
     }
 
-    public DataSourceFactory getDataSourceFactory() {
-        return null;
+    public DataSourceFactory getDatabase() {
+        return database;
     }
 
     public FlywayFactory getFlywayFactory() {
