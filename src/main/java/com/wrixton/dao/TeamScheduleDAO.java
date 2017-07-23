@@ -1,5 +1,6 @@
 package com.wrixton.dao;
 
+import com.wrixton.dtos.TeamInfoDTO;
 import com.wrixton.mapper.TeamScheduleMapper;
 import com.wrixton.model.TeamInfo;
 import org.skife.jdbi.v2.sqlobject.Bind;
