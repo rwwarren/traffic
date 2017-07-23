@@ -21,19 +21,6 @@ import org.skife.jdbi.v2.DBI;
 
 public class TrafficService extends Application<TrafficServiceConfiguration> {
 
-//    public FlywayBundle flywayBundle = new FlywayBundle("flyway-bundle")
-//    public FlywayBundle<TrafficServiceConfiguration> flywayBundle = new FlywayBundle<TrafficServiceConfiguration>() {
-//        @Override
-//        public DataSourceFactory getDataSourceFactory(TrafficServiceConfiguration configuration) {
-//            return configuration.getDataSourceFactory();
-//        }
-//
-//        @Override
-//        public FlywayFactory getFlywayFactory(TrafficServiceConfiguration configuration) {
-//            return configuration.getFlywayFactory();
-//        }
-//    };
-
  public FlywayBundle<TrafficServiceConfiguration> flywayBundle = new FlywayBundle<TrafficServiceConfiguration>("traffic-flyway") {
      @Override
      protected FlywayBundleConfiguration extractBundleConfiguration(TrafficServiceConfiguration config) throws Exception {
