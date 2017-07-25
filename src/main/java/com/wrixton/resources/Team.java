@@ -3,7 +3,6 @@ package com.wrixton.resources;
 import com.codahale.metrics.annotation.Timed;
 import com.wrixton.dao.TeamScheduleDAO;
 import com.wrixton.dtos.TeamInfoDTO;
-import com.wrixton.model.Model;
 import com.wrixton.model.TeamInfo;
 
 import javax.ws.rs.*;
@@ -32,7 +31,7 @@ public class Team {
     @Path("/add")
     @Timed
     public TeamInfoDTO addTeamInfo(TeamInfoDTO teamInfo) throws Exception {
-        return teamScheduleDAO.addTeamInfo(Model.fromDTO(teamInfo)) == 1 ? teamInfo : null;
+        return teamScheduleDAO.addTeamInfo(TeamInfo.fromDTO(teamInfo)) == 1 ? teamInfo : null;
     }
 
 }
