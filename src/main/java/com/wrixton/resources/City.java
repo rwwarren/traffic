@@ -62,7 +62,7 @@ public class City {
     @Path("{cityName}/schedule")
     @Timed
     public List<TeamScheduleDTO> getCitySchedule(@PathParam("cityName") String cityName) throws Exception {
-        CityTeams teams = getByCityName(cityName);
+//        CityTeams teams = getByCityName(cityName);
         List<TeamScheduleDTO> events = getEvents();
         return events;
     }
