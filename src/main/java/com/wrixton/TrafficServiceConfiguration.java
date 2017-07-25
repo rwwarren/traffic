@@ -13,6 +13,9 @@ public class TrafficServiceConfiguration extends Configuration {
     @NotEmpty
     private String googleApiKey;
 
+    @NotEmpty
+    private String ticketmasterApiKey;
+
     @Valid
     @NotNull
     @JsonProperty
@@ -26,6 +29,11 @@ public class TrafficServiceConfiguration extends Configuration {
     @JsonProperty
     public String getGoogleApiKey() {
         return googleApiKey;
+    }
+
+    @JsonProperty
+    public String getTicketmasterApiKey() {
+        return ticketmasterApiKey;
     }
 
     public DataSourceFactory getDatabase() {

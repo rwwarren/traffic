@@ -19,4 +19,25 @@ public class TeamScheduleDTO {
         this.eventDateTime = eventDateTime;
         this.location = location;
     }
+
+    public String getTeamName() {
+        return teamName;
+    }
+
+    public LocalDateTime getEventDateTime() {
+        return eventDateTime;
+    }
+
+    public LocationDTO getLocation() {
+        return location;
+    }
+
+    @Override
+    public String toString() {
+        return "TeamScheduleDTO{" +
+                "teamName='" + teamName + '\'' +
+                ", eventDateTime=" + eventDateTime +
+                ", location=" + location +
+                '}';
+    }
 }

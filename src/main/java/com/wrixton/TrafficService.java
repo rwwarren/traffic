@@ -1,5 +1,6 @@
 package com.wrixton;
 
+import com.ticketmaster.api.discovery.DiscoveryApi;
 import com.wrixton.collectors.*;
 import bundles.FlywayBundle;
 import bundles.configuration.FlywayBundleConfiguration;
@@ -55,12 +56,13 @@ public class TrafficService extends Application<TrafficServiceConfiguration> {
         final EventManager eventManager = new EventManager(gameTonightCollector, showboxCollector, wsdotCollector, wsccCollector);
         final TeamScheduleDAO teamScheduleDAO = jdbi.onDemand(TeamScheduleDAO.class);
         final CityTeamsDAO cityTeamsDAO = jdbi.onDemand(CityTeamsDAO.class);
+        final DiscoveryApi ticketmasterApi = new DiscoveryApi(config.getTicketmasterApiKey());
 
         environment.jersey().register(new Main());
         environment.jersey().register(new Why(eventManager));
         environment.jersey().register(new What(showboxCollector, wsdotCollector, wsccCollector, strangerCollector, config.getGoogleApiKey()));
         environment.jersey().register(new Team(teamScheduleDAO));
-        environment.jersey().register(new City(cityTeamsDAO, teamScheduleDAO));
+        environment.jersey().register(new City(cityTeamsDAO, teamScheduleDAO, ticketmasterApi));
 
         final ConnectionHealthCheck healthCheck = new ConnectionHealthCheck(config.getGoogleApiKey());
         environment.healthChecks().register("connections", healthCheck);
