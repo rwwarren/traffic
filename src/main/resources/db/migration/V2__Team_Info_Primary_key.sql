@@ -1,0 +1,1 @@
+ALTER TABLE traffic.team_info ADD PRIMARY KEY (id);
