@@ -3,10 +3,9 @@ package com.wrixton.resources;
 import com.codahale.metrics.annotation.Timed;
 import com.ticketmaster.api.discovery.DiscoveryApi;
 import com.ticketmaster.api.discovery.operation.SearchEventsOperation;
-import com.ticketmaster.api.discovery.response.PagedResponse;
 import com.ticketmaster.discovery.model.Date;
 import com.ticketmaster.discovery.model.Event;
-import com.ticketmaster.discovery.model.Events;
+import com.ticketmaster.discovery.model.Venue;
 import com.wrixton.dao.CityTeamsDAO;
 import com.wrixton.dao.TeamScheduleDAO;
 import com.wrixton.dtos.CityTeamDTO;
@@ -15,10 +14,9 @@ import com.wrixton.dtos.TeamScheduleDTO;
 import com.wrixton.model.CityTeam;
 import com.wrixton.model.CityTeams;
 import com.wrixton.model.TeamInfo;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -63,56 +61,23 @@ public class City {
     @GET
     @Path("{cityName}/schedule")
     @Timed
-//    public List<String> getCitySchedule(@PathParam("cityName") String cityName) throws Exception {
     public List<TeamScheduleDTO> getCitySchedule(@PathParam("cityName") String cityName) throws Exception {
         CityTeams teams = getByCityName(cityName);
-        //get all the teamInfos
-//        String format = String.format("https://app.ticketmaster.com/discovery/v2/events.json?postalCode=98102&apikey=%s", apiKey);
-//        StringBuilder sb = new StringBuilder();
-//        sb.append("https://app.ticketmaster.com/discovery/v2/events.json?")
-//                .append(String.format("marketId=%s", "42"))
-////                .append(String.format("postalCode=%s", "98134"))
-//                .append(String.format("&startDateTime=%s", "2017-07-24T06:00:00Z"))
-//                .append(String.format("&endDateTime=%s", "2017-07-25T06:00:00Z"))
-////                .append(String.format("&endDateTime=%s", "2017-07-25T06:00:00Z"))
-//                .append(String.format("&apikey=%s", "QP0EPhFCwq1PG0leHs0wGWCjzGplrC9r"));
-
-//        getTeamSchedule(new TeamInfo(1l, "Sounders", sb.toString()));
         List<TeamScheduleDTO> events = getEvents();
         return events;
-//        getTeamSchedule(new TeamInfo(1l, "Sounders", "https://www.mlb.com/mariners/schedule/2017-07/list"));
-//        getTeamSchedule(new TeamInfo(1l, "Sounders", "https://www.soundersfc.com/schedule/"));
-//        return teams.getTeams().stream().map(c -> getTeamSchedule(c)).collect(Collectors.toList());
-//        return new ArrayList<>();
-    }
-
-
-    private TeamScheduleDTO getTeamSchedule(TeamInfo team) {
-
-        try {
-            Document response = Jsoup.connect(team.getScheduleUrl())
-//            Connection.Response response = Jsoup.connect(team.getScheduleUrl())
-//                    .followRedirects(true)
-//                    .ignoreContentType(true)
-                    .header("content-type", "application/json;charset=utf-8")
-//                    .header("content-type", "application/json")
-                    .ignoreContentType(true)
-                    .get();
-//                    .execute();
-//            Document document = Jsoup.connect(team.getScheduleUrl()).get();
-//            String body = response.body();
-            Elements elements = response.select("events");
-            System.out.println(response);
-            return new TeamScheduleDTO("Sounders", null, null);
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     private List<TeamScheduleDTO> getEvents(){
         try {
-            List<Event> events = ticketmasterApi.searchEvents(new SearchEventsOperation().marketId("42").startDateTime("2017-07-24T06:00:00Z").endDateTime("2017-07-25T06:00:00Z")).getContent().getEvents();
-            System.out.println(events);
+            DateTime today = new DateTime().withTimeAtStartOfDay();
+            DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ssZZ");
+            String todayString = format.print(today);
+            String tomorrowString = format.print(today.plusDays(1));
+            SearchEventsOperation searchEventsOperation = new SearchEventsOperation()
+                    .marketId("42") //to change
+                    .startDateTime(todayString)
+                    .endDateTime(tomorrowString);
+            List<Event> events = ticketmasterApi.searchEvents(searchEventsOperation).getContent().getEvents();
             return events.stream()
                     .filter(current -> current.getDates().getStart().getLocalTime() != null)
                     .map(current -> {
@@ -120,11 +85,13 @@ public class City {
                         LocalDate localDate = LocalDate.parse(start.getLocalDate());
                         LocalTime localTime = LocalTime.parse(start.getLocalTime());
                         LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
-                        return new TeamScheduleDTO(current.getName(), localDateTime, new LocationDTO(1.1, 1.1));
+                        Venue.Location venueLocation = current.getVenues().stream().findFirst().get().getLocation();
+                        LocationDTO location = new LocationDTO(Double.valueOf(venueLocation.getLatitude()), Double.valueOf(venueLocation.getLongitude()));
+                        return new TeamScheduleDTO(current.getName(), localDateTime, location);
                     }).collect(Collectors.toList());
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println(e);
-//            throw new e;
             return new ArrayList<>();
         }
     }
