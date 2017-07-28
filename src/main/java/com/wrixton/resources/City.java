@@ -7,6 +7,7 @@ import com.ticketmaster.discovery.model.Date;
 import com.ticketmaster.discovery.model.Event;
 import com.ticketmaster.discovery.model.Venue;
 import com.wrixton.dao.CityTeamsDAO;
+import com.wrixton.dao.MarketDAO;
 import com.wrixton.dao.TeamScheduleDAO;
 import com.wrixton.dtos.CityTeamDTO;
 import com.wrixton.dtos.EventTypeDTO;
@@ -14,6 +15,7 @@ import com.wrixton.dtos.LocationDTO;
 import com.wrixton.dtos.TeamScheduleDTO;
 import com.wrixton.model.CityTeam;
 import com.wrixton.model.CityTeams;
+import com.wrixton.model.Market;
 import com.wrixton.model.TeamInfo;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -41,12 +43,15 @@ public class City {
 
     private final CityTeamsDAO cityTeamsDAO;
     private final TeamScheduleDAO teamScheduleDAO;
+    private final MarketDAO marketDAO;
     private final DiscoveryApi ticketmasterApi;
+
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ssZZ");
 
-    public City(CityTeamsDAO cityTeamsDAO, TeamScheduleDAO teamScheduleDAO, DiscoveryApi ticketmasterApi) {
+    public City(CityTeamsDAO cityTeamsDAO, TeamScheduleDAO teamScheduleDAO, MarketDAO marketDAO, DiscoveryApi ticketmasterApi) {
         this.cityTeamsDAO = cityTeamsDAO;
         this.teamScheduleDAO = teamScheduleDAO;
+        this.marketDAO = marketDAO;
         this.ticketmasterApi = ticketmasterApi;
     }
 
@@ -70,13 +75,13 @@ public class City {
     @Path("{cityName}/schedule")
     @Timed
     public List<TeamScheduleDTO> getCitySchedule(@PathParam("cityName") String cityName) throws Exception {
-        String marketId =   "42";
+        Market market = marketDAO.getTeamSchedule(cityName);
         try {
             DateTime today = new DateTime().withTimeAtStartOfDay();
             String todayString = dateTimeFormatter.print(today);
             String tomorrowString = dateTimeFormatter.print(today.plusDays(1));
             SearchEventsOperation searchEventsOperation = new SearchEventsOperation()
-                    .marketId(marketId) //to change
+                    .marketId(String.valueOf(market.getTicketmasterMarketId())) //to change
                     .startDateTime(todayString)
                     .endDateTime(tomorrowString);
             List<Event> events = ticketmasterApi.searchEvents(searchEventsOperation).getContent().getEvents();

@@ -23,4 +23,15 @@ public class Market implements Model<MarketDTO>{
         return new Market(null, dto.getTicketmasterMarketId(), dto.getMarketName());
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public long getTicketmasterMarketId() {
+        return ticketmasterMarketId;
+    }
+
+    public String getMarketName() {
+        return marketName;
+    }
 }
