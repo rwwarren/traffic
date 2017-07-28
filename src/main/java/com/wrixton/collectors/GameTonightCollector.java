@@ -29,7 +29,7 @@ public class GameTonightCollector {
         try {
             final GameTonightDTO gameTonightDTO = request.get(GAME_TONIGHT);
             if (gameTonightDTO.isGame_tonight()) {
-                return gameTonightDTO.getToday().values().stream().map(current -> new Event(current.getKey(), current.getTitle(), current.getDate().toLocalDate(), current.getDate().toLocalTime(), new Location(1.1, 1.1))).collect(Collectors.toList());
+                return gameTonightDTO.getToday().values().stream().map(current -> new Event(current.getKey(), current.getTitle(), current.getDate().toLocalDate(), current.getDate().toLocalTime(), new Location("",1.1, 1.1))).collect(Collectors.toList());
             }
         } catch (ResponseProcessingException e) {
             //No game tonight
