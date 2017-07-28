@@ -21,14 +21,14 @@ public class Market {
     @GET
     @Path("{marketName}")
     @Timed
-    public String getMarketName(@PathParam("marketName") String marketName) throws Exception {
-        return "";
+    public MarketDTO getMarketName(@PathParam("marketName") String marketName) throws Exception {
+        return marketDAO.getTeamSchedule(marketName).toDTO();
     }
 
     @POST
     @Timed
-    public String addMarket(MarketDTO market) throws Exception {
-        return "";
+    public MarketDTO addMarket(MarketDTO market) throws Exception {
+        return (marketDAO.addTeamInfo(com.wrixton.model.Market.fromDTO(market)) == 1) ? market : null;
     }
 
 }
