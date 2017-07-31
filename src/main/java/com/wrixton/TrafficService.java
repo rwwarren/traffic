@@ -6,6 +6,7 @@ import bundles.FlywayBundle;
 import bundles.configuration.FlywayBundleConfiguration;
 import com.wrixton.dao.CityTeamsDAO;
 import com.wrixton.dao.MarketDAO;
+import com.wrixton.dao.ScheduleDAO;
 import com.wrixton.dao.TeamScheduleDAO;
 import com.wrixton.resources.*;
 import io.dropwizard.Application;
@@ -58,6 +59,7 @@ public class TrafficService extends Application<TrafficServiceConfiguration> {
         final TeamScheduleDAO teamScheduleDAO = jdbi.onDemand(TeamScheduleDAO.class);
         final CityTeamsDAO cityTeamsDAO = jdbi.onDemand(CityTeamsDAO.class);
         final MarketDAO marketDAO = jdbi.onDemand(MarketDAO.class);
+        final ScheduleDAO scheduleDAO = jdbi.onDemand(ScheduleDAO.class);
         final DiscoveryApi ticketmasterApi = new DiscoveryApi(config.getTicketmasterApiKey());
 
         environment.jersey().register(new Main());
@@ -66,6 +68,7 @@ public class TrafficService extends Application<TrafficServiceConfiguration> {
         environment.jersey().register(new Team(teamScheduleDAO));
         environment.jersey().register(new City(cityTeamsDAO, teamScheduleDAO, marketDAO, ticketmasterApi));
         environment.jersey().register(new Market(marketDAO));
+        environment.jersey().register(new Schedule(scheduleDAO));
 
         final ConnectionHealthCheck healthCheck = new ConnectionHealthCheck(config.getGoogleApiKey());
         environment.healthChecks().register("connections", healthCheck);
